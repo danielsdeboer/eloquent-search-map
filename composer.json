@@ -1,0 +1,45 @@
+{
+    "name": "aviator/eloquent-search",
+    "type": "library",
+    "description": "An Eloquent search macro for effortlessly searching models",
+    "keywords": [
+        "php",
+        "php7",
+        "laravel",
+        "eloquent",
+        "search"
+    ],
+    "homepage": "https://github.com/danielsdeboer/eloquent-search",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel S. Deboer",
+            "email": "daniel.s.deboer@gmail.com",
+            "homepage": "https://aviatorcreative.ca",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Aviator\\Search\\": "src/"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "require": {
+        "php": ">=7.0.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~6.4.0",
+        "orchestra/testbench": "~3.4"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Aviator\\Search\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}
