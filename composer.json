@@ -1,5 +1,5 @@
 {
-    "name": "aviator/eloquent-search",
+    "name": "aviator/eloquent-search-map",
     "type": "library",
     "description": "An Eloquent search macro for effortlessly searching models",
     "keywords": [
@@ -9,7 +9,7 @@
         "eloquent",
         "search"
     ],
-    "homepage": "https://github.com/danielsdeboer/eloquent-search",
+    "homepage": "https://github.com/danielsdeboer/eloquent-search-map",
     "license": "MIT",
     "authors": [
         {

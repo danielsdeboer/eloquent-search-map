@@ -21,7 +21,5 @@ class UserWithSearches extends User implements Searchable
         parent::__construct();
 
         $this->searches = $searches;
-
-        $this->setSearchBuilder();
     }
 }

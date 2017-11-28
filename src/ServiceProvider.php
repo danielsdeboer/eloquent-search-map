@@ -34,7 +34,9 @@ class ServiceProvider extends ParentServiceProvider
             /** @var \Illuminate\Http\Request $request */
             $request = $request ?: request();
 
-            ModelNotSearchable::assertSearchable('Builder Search Macro', $context->getModel());
+            ModelNotSearchable::assertSearchable('Search map macro', $context->getModel());
+
+            $context->getModel()->setSearchBuilder();
 
             foreach (array_assoc($searches) as $searchAlias => $requestAlias) {
                 $requestAlias = dot_to_underscore($requestAlias);

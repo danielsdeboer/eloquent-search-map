@@ -8,7 +8,7 @@ use Aviator\Search\Tests\Fixtures\Factory;
 use Aviator\Search\Tests\Fixtures\Make;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
-class TestCase extends OrchestraTestCase
+abstract class TestCase extends OrchestraTestCase
 {
     /** @var \Aviator\Search\Tests\Fixtures\Make */
     public $make;
