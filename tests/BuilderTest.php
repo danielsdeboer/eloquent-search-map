@@ -47,20 +47,19 @@ class BuilderTest extends TestCase
     /** @test */
     public function it_composes_callbacks_for_searches ()
     {
-        $callback = $this->builder->buildCallback(
-            'test',
-            'test',
-            'test',
-            request()
-        );
+        $callback = $this->builder->generate('column')('term');
 
         $this->assertInstanceOf(Closure::class, $callback);
     }
 
     /** @test */
-    public function get_method_looks_up_the_column_and_returns_the_callback ()
+    public function get_method_looks_up_the_column_and_request_payload_and_returns_the_callback ()
     {
-        $callback = $this->builder->get('name', 'name', request());
+        $callback = $this->builder->get(
+            'name',
+            'name',
+            request()
+        );
 
         $this->assertInstanceOf(Closure::class, $callback);
     }

@@ -28,44 +28,60 @@ class Builder
     }
 
     /**
-     * @param string $searchAlias
      * @param string $searchColumn
      * @param string $searchTerm
      * @return \Closure
      */
     public function buildCallback (
-        string $searchAlias,
         string $searchColumn,
-        string $searchTerm
+        string $searchTerm = ''
     ) : Closure
     {
-        /**
-         * @param \Illuminate\Database\Eloquent\Builder $query
-         * @return \Illuminate\Database\Eloquent\Builder
+        /*
+         * Handle relational searches. This is predicated on the relationship model also
+         * having a searches callback bag defined.
          */
-        return function (Eloquent $query) use ($searchAlias, $searchColumn, $searchTerm) {
-            return $query->where(
-                $searchColumn,
-                'like',
-                $this->wrapPercent($searchTerm)
-            );
+//        if (str_contains($column, '.')) {
+//            return $this->composeRelationCallback($request, $alias, $column);
+//        }
+
+
+    }
+
+    /**
+     * Generate the closure.
+     * @param string $column
+     * @return \Closure
+     */
+    public function generate (string $column)
+    {
+        return function ($term) use ($column) {
+            return function (Eloquent $query) use ($term, $column) {
+                return $query->where(
+                    $column,
+                    'like',
+                    $this->wrapPercent($term)
+                );
+            };
         };
     }
 
     /**
-     * Get the closure for the given aliases and request.
+     * Get the appropriate column and request data and build the closure.
      * @param string $searchAlias
      * @param string $requestAlias
      * @param \Illuminate\Http\Request $request
      * @return \Closure
      */
-    public function get (string $searchAlias, string $requestAlias, Request $request) : Closure
+    public function get (
+        string $searchAlias,
+        string $requestAlias,
+        Request $request
+    ) : Closure
     {
-        return $this->buildCallback(
-            $searchAlias,
-            $this->column($searchAlias),
-            $request->get($requestAlias)
-        );
+        return $this->generate
+            ($this->column($searchAlias))
+            ($this->term($request, $requestAlias));
     }
 
     /**
@@ -86,13 +102,7 @@ class Builder
         $column = $this->searches[$alias] ?? null;
 
         if (is_null($column)) {
-            throw new UndefinedSearch(
-                sprintf(
-                    'The search column "%s" was not defined on %s.',
-                    $alias,
-                    get_class($this->model)
-                )
-            );
+            $this->throwUndefinedSearch($alias);
         }
 
         return $column;
@@ -104,20 +114,9 @@ class Builder
      */
     public function setSearches (array $searches) : Builder
     {
-        $this->searches = $this->normalizeArray($searches);
+        $this->searches = array_assoc($searches);
 
         return $this;
-    }
-
-    /**
-     * Convert a given non-associative or mixed array to an
-     * associative array.
-     * @param array $array
-     * @return array
-     */
-    protected function normalizeArray (array $array) : array
-    {
-        return array_assoc($array);
     }
 
     /**
@@ -137,7 +136,12 @@ class Builder
     protected function throwUndefinedSearch ($search)
     {
         throw new UndefinedSearch(
-            'The search "' . $search . '" doesn\'t exist in the searches array.'
+            sprintf(
+                'The search "%s" doesn\'t exist in the searches for %s',
+                $search,
+                get_class($this->model)
+            )
+
         );
     }
 
@@ -148,6 +152,18 @@ class Builder
      */
     protected function wrapPercent (string $string) : string
     {
-        return '%' . $string .'%';
+        return '%' . $string . '%';
+    }
+
+    /**
+     * Get the search term from the request. If none exists return
+     * an empty string.
+     * @param \Illuminate\Http\Request $request
+     * @param string $alias
+     * @return string
+     */
+    protected function term (Request $request, string $alias) : string
+    {
+        return $request->get($alias) ?: '';
     }
 }

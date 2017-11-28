@@ -3,6 +3,7 @@
 namespace Aviator\Search\Tests\Fixtures;
 
 use Aviator\Search\Tests\Fixtures\Abstracts\Gettable;
+use Aviator\Search\Tests\Fixtures\Classes\User;
 use Faker\Factory as Faker;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,14 +28,26 @@ class Factory extends Gettable
      * Create a batch of users.
      * @param int $count
      */
-    public function users (int $count = 10)
+    public function companies (int $count = 10)
     {
-        $this->batchOf($count, 'user', function (Model $model) {
-            $model->name = $this->faker->name;
-            $model->email = $this->faker->email;
-
-            $model->save();
+        $this->batchOf($count, 'company', function (Model $model) {
+            return $model->query()->create([
+                'city' => $this->faker->city,
+                'user_id' => $this->user()->id
+            ]);
         });
+    }
+
+    /**
+     * Create a user model and return it.
+     * @return mixed
+     */
+    public function user ()
+    {
+        return User::query()->create([
+            'name' => $this->faker->name,
+            'email' => $this->faker->email,
+        ]);
     }
 
     /**

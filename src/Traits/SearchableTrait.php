@@ -7,9 +7,8 @@ use Closure;
 use Illuminate\Http\Request;
 
 /**
- * Trait SearchableTrait
  * @mixin \Illuminate\Database\Eloquent\Model
- * @property array searches
+ * @mixin \Aviator\Search\Interfaces\Searchable
  */
 trait SearchableTrait
 {
@@ -22,9 +21,7 @@ trait SearchableTrait
      */
     public function searches ()
     {
-        return property_exists($this, 'searches')
-            ? $this->searches
-            : [];
+        return $this->searches;
     }
 
     /**
@@ -44,7 +41,11 @@ trait SearchableTrait
      * @param \Illuminate\Http\Request $request
      * @return \Closure
      */
-    public function getSearch (string $searchAlias, string $requestAlias, Request $request) : Closure
+    public function getSearch (
+        string $searchAlias,
+        string $requestAlias,
+        Request $request
+    ) : Closure
     {
         return $this->searchBuilder->get($searchAlias, $requestAlias, $request);
     }

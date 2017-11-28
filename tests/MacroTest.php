@@ -15,8 +15,9 @@ class MacroTest extends TestCase
         $userToSearch = User::first();
         $request = new Request(['name' => $userToSearch->name]);
 
-        $search = User::search(['name'], $request)->get();
+        $search = $this->make->userWithSearches->search(['name'], $request)->get();
 
+        $this->assertSame($userToSearch->name, $search->first()->name);
         $this->assertCount(1, $search);
     }
 
@@ -25,7 +26,7 @@ class MacroTest extends TestCase
     {
         $request = new Request([]);
 
-        $search = User::search(['name'], $request)->get();
+        $search = $this->make->userWithSearches->search(['name'], $request)->get();
 
         $this->assertCount(User::all()->count(), $search);
     }
@@ -35,7 +36,7 @@ class MacroTest extends TestCase
     {
         $this->expectException(ModelNotSearchable::class);
 
-        $this->make->nonSearchClass->search(['for-something']);
+        $this->make->user->search(['for-something']);
     }
 
     /** @test */
@@ -44,9 +45,10 @@ class MacroTest extends TestCase
         $userToSearch = User::first();
         $request = new Request(['user_name' => $userToSearch->name]);
 
-        $search = User::search(['name' => 'user_name'], $request)->get();
+        $search = $this->make->userWithSearches->search(['name' => 'user_name'], $request)->get();
 
         $this->assertCount(1, $search);
+        $this->assertSame($userToSearch->name, $search->first()->name);
     }
 
     /** @test */
@@ -54,6 +56,12 @@ class MacroTest extends TestCase
     {
         $this->expectException(UndefinedSearch::class);
 
-        User::search(['some-undefined-alias']);
+        $this->make->userWithSearches->search(['some-undefined-alias']);
+    }
+
+    /** @test */
+    public function it_searches_in_relations_with_dot_notation ()
+    {
+        $userWithRelation = User::first();
     }
 }

@@ -2,14 +2,23 @@
 
 namespace Aviator\Search\Tests;
 
+use Aviator\Search\Tests\Fixtures\Classes\User;
+
 class EnvironmentTest extends TestCase
 {
     /** @test */
     public function the_database_is_populated ()
     {
-        $count = $this->make->user->count();
+        $counts = collect([
+            $this->make->user->count(),
+            $this->make->company->count(),
+        ]);
 
-        $this->assertEquals(10, $count);
+        $test = function ($count) {
+            $this->assertEquals(10, $count);
+        };
+
+        $counts->each($test);
     }
 
     /** @test */
@@ -19,5 +28,17 @@ class EnvironmentTest extends TestCase
             'Aviator\Search\ServiceProvider',
             app()->getLoadedProviders()
         );
+    }
+
+    /** @test */
+    public function the_user_has_a_company_relation ()
+    {
+        $users = User::query()->get();
+
+        $test = function ($user) {
+            $this->assertNotNull($user->company);
+        };
+
+        $users->each($test);
     }
 }

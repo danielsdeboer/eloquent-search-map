@@ -14,10 +14,11 @@ class UserWithSearches extends User implements Searchable
 
     /**
      * Constructor.
+     * @param array $searches
      */
-    public function __construct (array $searches)
+    public function __construct (array $searches = [])
     {
-        parent::__construct([]);
+        parent::__construct();
 
         $this->searches = $searches;
 

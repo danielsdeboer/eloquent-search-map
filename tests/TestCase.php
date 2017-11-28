@@ -67,6 +67,6 @@ class TestCase extends OrchestraTestCase
 
         (new CreateUsersTable())->up();
 
-        $this->factory->users;
+        $this->factory->companies();
     }
 }
