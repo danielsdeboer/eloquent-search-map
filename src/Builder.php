@@ -27,27 +27,6 @@ class Builder
         $this->setSearches($searches);
     }
 
-//    /**
-//     * @param string $searchColumn
-//     * @param string $searchTerm
-//     * @return \Closure
-//     */
-//    public function buildCallback (
-//        string $searchColumn,
-//        string $searchTerm = ''
-//    ) : Closure
-//    {
-//        /*
-//         * Handle relational searches. This is predicated on the relationship model also
-//         * having a searches callback bag defined.
-//         */
-////        if (str_contains($column, '.')) {
-////            return $this->composeRelationCallback($request, $alias, $column);
-////        }
-//
-//
-//    }
-
     /**
      * Generate the base or related callback.
      * @param string $column
