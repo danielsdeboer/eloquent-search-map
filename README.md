@@ -20,7 +20,7 @@ With this package you can do this instead:
 $model::search(['something', 'otherthing'])->get();
 ```
 
-You may create an option column map on your model, as well as mapping request properties on the fly.
+You may create an optional column map on your model, as well as mapping request properties on the fly.
 
 ## Installation
 
@@ -111,7 +111,7 @@ protected $searches = [
 This will look for a relation method called `company()` and add a `whereHas` constraint to the query. For instance:
 
 ```php
-$users = User::search('company.city')->get();
+$users = User::search(['company.city'])->get();
 ```
 
 This will look on the `User` model for a relation `company()` and search in the `city` attribute of that model.
