@@ -4,13 +4,13 @@
 
 ## Overview
 
-Perform Eloquent search effortlessly with this Eloquent macro.
+Add Eloquent query search constraints effortlessly with this Eloquent macro.
 
 This is especially handy when you find yourself building simple, optional searches often:
 
 ```php
 $model::when($request->something, function (Builder $query) {
-    return $query->where('column', 'like', '%' . $request->something . '%); 
+    return $query->where('column', 'like', '%' . $request->something . '%'); 
 })->get();
 ```
 
@@ -20,7 +20,7 @@ With this package you can do this instead:
 $model::search(['something', 'otherthing'])->get();
 ```
 
-You may create an option column map on your model, as well as mapping request terms on the fly.
+You may create an option column map on your model, as well as mapping request properties on the fly.
 
 ## Installation
 
