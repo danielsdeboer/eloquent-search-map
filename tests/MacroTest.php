@@ -4,6 +4,7 @@ namespace Aviator\Search\Tests;
 
 use Aviator\Search\Exceptions\ModelNotSearchable;
 use Aviator\Search\Exceptions\UndefinedSearch;
+use Aviator\Search\Tests\Fixtures\Classes\Company;
 use Aviator\Search\Tests\Fixtures\Classes\User;
 use Illuminate\Http\Request;
 
@@ -60,8 +61,21 @@ class MacroTest extends TestCase
     }
 
     /** @test */
-    public function it_searches_in_relations_with_dot_notation ()
+    public function it_searches_in_relations_with_dot_notation_converting_dot_notation_to_underscores ()
     {
-        $userWithRelation = User::first();
+        $companyToSearch = Company::query()
+            ->inRandomOrder()
+            ->first();
+
+        $request = new Request(
+            ['company_city' => $companyToSearch->city]
+        );
+
+        $search = $this->make->userWithRelationSearch
+            ->search(['company.city'], $request)
+            ->get();
+
+        $this->assertSame($companyToSearch->city, $search->first()->company->city);
+        $this->assertCount(1, $search);
     }
 }

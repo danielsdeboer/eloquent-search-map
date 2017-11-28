@@ -15,6 +15,6 @@ class User extends Model
     /** @return \Illuminate\Database\Eloquent\Relations\HasOne */
     public function company ()
     {
-        return $this->hasOne(Company::class);
+        return $this->hasOne(Company::class, 'user_id', 'id');
     }
 }

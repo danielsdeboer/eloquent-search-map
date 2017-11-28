@@ -13,6 +13,7 @@ use Aviator\Search\Tests\Fixtures\Classes\UserWithSearches;
  * @property \Aviator\Search\Tests\Fixtures\Classes\UserWithSearches userWithMixedSearches
  * @property \Aviator\Search\Tests\Fixtures\Classes\UserWithSearches userWithSearches
  * @property \Aviator\Search\Tests\Fixtures\Classes\Company company
+ * @property \Aviator\Search\Tests\Fixtures\Classes\UserWithSearches userWithRelationSearch
  */
 class Make extends Gettable
 {
@@ -59,5 +60,14 @@ class Make extends Gettable
     public function userWithEmptySearches ()
     {
         return new UserWithSearches([]);
+    }
+
+    /**
+     * Get a Searchable user with a relationship search.
+     * @return \Aviator\Search\Tests\Fixtures\Classes\UserWithSearches
+     */
+    public function userWithRelationSearch ()
+    {
+        return new UserWithSearches(['company.city']);
     }
 }

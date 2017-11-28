@@ -37,6 +37,8 @@ class ServiceProvider extends ParentServiceProvider
             ModelNotSearchable::assertSearchable('Builder Search Macro', $context->getModel());
 
             foreach (array_assoc($searches) as $searchAlias => $requestAlias) {
+                $requestAlias = dot_to_underscore($requestAlias);
+
                 $context->when(
                     $request->get($requestAlias),
                     $context->getModel()->getSearch($searchAlias, $requestAlias, $request)

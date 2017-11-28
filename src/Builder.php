@@ -27,40 +27,70 @@ class Builder
         $this->setSearches($searches);
     }
 
+//    /**
+//     * @param string $searchColumn
+//     * @param string $searchTerm
+//     * @return \Closure
+//     */
+//    public function buildCallback (
+//        string $searchColumn,
+//        string $searchTerm = ''
+//    ) : Closure
+//    {
+//        /*
+//         * Handle relational searches. This is predicated on the relationship model also
+//         * having a searches callback bag defined.
+//         */
+////        if (str_contains($column, '.')) {
+////            return $this->composeRelationCallback($request, $alias, $column);
+////        }
+//
+//
+//    }
+
     /**
-     * @param string $searchColumn
-     * @param string $searchTerm
-     * @return \Closure
-     */
-    public function buildCallback (
-        string $searchColumn,
-        string $searchTerm = ''
-    ) : Closure
-    {
-        /*
-         * Handle relational searches. This is predicated on the relationship model also
-         * having a searches callback bag defined.
-         */
-//        if (str_contains($column, '.')) {
-//            return $this->composeRelationCallback($request, $alias, $column);
-//        }
-
-
-    }
-
-    /**
-     * Generate the closure.
+     * Generate the base or related callback.
      * @param string $column
      * @return \Closure
      */
-    public function generate (string $column)
+    public function generate (string $column) : Closure
     {
         return function ($term) use ($column) {
+            return string_contains($column)('.')
+                ? $this->relatedCb($column)($term)
+                : $this->baseCb($column)($term);
+        };
+    }
+
+    /**
+     * Generate a callback for the base model.
+     * @param string $column
+     * @return \Closure
+     */
+    public function baseCb (string $column) : Closure
+    {
+        return function ($term) use ($column) : Closure {
             return function (Eloquent $query) use ($term, $column) {
-                return $query->where(
-                    $column,
-                    'like',
-                    $this->wrapPercent($term)
+                return $query->where($column, 'like', $this->wrapPercent($term));
+            };
+        };
+    }
+
+    /**
+     * Generate a callback for a base model.
+     * @param string $column
+     * @return \Closure
+     */
+    public function relatedCb (string $column)
+    {
+        return function ($term) use ($column) {
+            list($relation, $relationColumn) = explode('.', $column);
+            $callback = $this->baseCb($relationColumn)($term);
+
+            return function (Eloquent $query) use ($relation, $callback) {
+                return $query->whereHas(
+                    $relation,
+                    $callback
                 );
             };
         };
@@ -79,6 +109,8 @@ class Builder
         Request $request
     ) : Closure
     {
+        $requestAlias = dot_to_underscore($requestAlias);
+
         return $this->generate
             ($this->column($searchAlias))
             ($this->term($request, $requestAlias));
@@ -141,7 +173,6 @@ class Builder
                 $search,
                 get_class($this->model)
             )
-
         );
     }
 

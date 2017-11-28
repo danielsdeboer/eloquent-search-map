@@ -5,6 +5,7 @@ namespace Aviator\Search\Tests;
 use Aviator\Search\Builder;
 use Aviator\Search\Exceptions\UndefinedSearch;
 use Closure;
+use Illuminate\Database\Query\Builder as Database;
 
 class BuilderTest extends TestCase
 {
@@ -70,5 +71,20 @@ class BuilderTest extends TestCase
         $this->expectException(UndefinedSearch::class);
 
         $this->builder->get('undefined-search', 'name', request());
+    }
+
+    /** @test */
+    public function it_composes_callbacks_for_related_model_searches ()
+    {
+        /** @var Closure $callback */
+        $callback = $this->builder->generate('company.city')('term');
+
+        $wheres = $callback->__invoke($this->model->query())
+            ->getQuery()
+            ->wheres;
+
+        $this->assertInstanceOf(Closure::class, $callback);
+        $this->assertInstanceOf(Database::class, $wheres[0]['query']);
+        $this->assertSame('Exists', $wheres[0]['type']);
     }
 }
