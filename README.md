@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/danielsdeboer/eloquent-search-map.svg?branch=master)](https://travis-ci.org/danielsdeboer/eloquent-search-map)
+[![Latest Stable Version](https://poser.pugx.org/aviator/eloquent-search-map/v/stable)](https://packagist.org/packages/aviator/eloquent-search-map)
+[![License](https://poser.pugx.org/aviator/eloquent-search-map/license)](https://packagist.org/packages/aviator/eloquent-search-map)
 
 ## Overview
 
