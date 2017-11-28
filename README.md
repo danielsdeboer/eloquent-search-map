@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/danielsdeboer/EloquentSearchMap.svg?branch=master)](https://travis-ci.org/danielsdeboer/EloquentSearchMap)
+[![Build Status](https://travis-ci.org/danielsdeboer/eloquent-search-map.svg?branch=master)](https://travis-ci.org/danielsdeboer/eloquent-search-map)
 
 ## Overview
 
