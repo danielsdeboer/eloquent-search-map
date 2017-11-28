@@ -5,6 +5,8 @@ namespace Aviator\Search;
 use Aviator\Search\Exceptions\UndefinedSearch;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder as Eloquent;
+use Illuminate\Http\Request;
 
 class Builder
 {
@@ -26,20 +28,74 @@ class Builder
     }
 
     /**
+     * @param string $searchAlias
+     * @param string $searchColumn
+     * @param string $searchTerm
      * @return \Closure
      */
-    public function buildCallback () : Closure
+    public function buildCallback (
+        string $searchAlias,
+        string $searchColumn,
+        string $searchTerm
+    ) : Closure
     {
-        return function () {};
-//        return function (Builder $query) use () {
-//            return $query->where($column, 'like', '%' . $request->$alias . '%');
-//        };
+        /**
+         * @param \Illuminate\Database\Eloquent\Builder $query
+         * @return \Illuminate\Database\Eloquent\Builder
+         */
+        return function (Eloquent $query) use ($searchAlias, $searchColumn, $searchTerm) {
+            return $query->where(
+                $searchColumn,
+                'like',
+                $this->wrapPercent($searchTerm)
+            );
+        };
     }
 
-    /** @return array */
+    /**
+     * Get the closure for the given aliases and request.
+     * @param string $searchAlias
+     * @param string $requestAlias
+     * @param \Illuminate\Http\Request $request
+     * @return \Closure
+     */
+    public function get (string $searchAlias, string $requestAlias, Request $request) : Closure
+    {
+        return $this->buildCallback(
+            $searchAlias,
+            $this->column($searchAlias),
+            $request->get($requestAlias)
+        );
+    }
+
+    /**
+     * @return array
+     */
     public function searches () : array
     {
         return $this->searches;
+    }
+
+    /**
+     * @param string $alias
+     * @return string
+     * @throws \Aviator\Search\Exceptions\UndefinedSearch
+     */
+    public function column (string $alias) : string
+    {
+        $column = $this->searches[$alias] ?? null;
+
+        if (is_null($column)) {
+            throw new UndefinedSearch(
+                sprintf(
+                    'The search column "%s" was not defined on %s.',
+                    $alias,
+                    get_class($this->model)
+                )
+            );
+        }
+
+        return $column;
     }
 
     /**
@@ -61,48 +117,7 @@ class Builder
      */
     protected function normalizeArray (array $array) : array
     {
-        return array_map_with_keys($array, function ($key, $value) {
-           return [
-               is_numeric($key) ? $value : $key,
-               $value
-           ];
-        });
-    }
-
-    protected function prepareArguments ($search, $arguments)
-    {
-
-    }
-
-    /**
-     * Redirect method calls to the callback builder.
-     * @param $search
-     * @param array $arguments
-     * @return \Closure
-     */
-    public function __call ($search, $arguments) : Closure
-    {
-        if ($this->searchExists($search)) {
-            return $this->buildCallback(
-//                ...$this->prepareArguments($search, $arguments)
-            );
-        }
-
-        $this->throwUndefinedSearch($search);
-    }
-
-    /**
-     * Redirect property calls to the callback builder.
-     * @param $search
-     * @return \Closure
-     */
-    public function __get ($search) : Closure
-    {
-        if ($this->searchExists($search)) {
-            return $this->buildCallback();
-        }
-
-        $this->throwUndefinedSearch($search);
+        return array_assoc($array);
     }
 
     /**
@@ -124,5 +139,15 @@ class Builder
         throw new UndefinedSearch(
             'The search "' . $search . '" doesn\'t exist in the searches array.'
         );
+    }
+
+    /**
+     * Wrap a string in percentage signs.
+     * @param string $string
+     * @return string
+     */
+    protected function wrapPercent (string $string) : string
+    {
+        return '%' . $string .'%';
     }
 }

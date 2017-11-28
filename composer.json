@@ -28,7 +28,8 @@
         ]
     },
     "require": {
-        "php": ">=7.0.0"
+        "php": ">=7.0.0",
+        "aviator/array-map-keys": "^0.1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~6.4.0",

@@ -47,40 +47,29 @@ class BuilderTest extends TestCase
     /** @test */
     public function it_composes_callbacks_for_searches ()
     {
-        $callback = $this->builder->buildCallback();
+        $callback = $this->builder->buildCallback(
+            'test',
+            'test',
+            'test',
+            request()
+        );
 
         $this->assertInstanceOf(Closure::class, $callback);
     }
-    
+
     /** @test */
-    public function it_redirects_method_calls_with_magic_call ()
+    public function get_method_looks_up_the_column_and_returns_the_callback ()
     {
-        $callback = $this->builder->name();
+        $callback = $this->builder->get('name', 'name', request());
 
         $this->assertInstanceOf(Closure::class, $callback);
     }
 
     /** @test */
-    public function magic_call_throws_an_error_if_the_search_mapping_doesnt_exist ()
+    public function it_throws_an_exception_if_the_search_isnt_defined ()
     {
         $this->expectException(UndefinedSearch::class);
 
-        $this->builder->somethingThatDoenstExist();
-    }
-
-    /** @test */
-    public function it_redirects_calls_with_magic_get ()
-    {
-        $callback = $this->builder->name;
-
-        $this->assertInstanceOf(Closure::class, $callback);
-    }
-
-    /** @test */
-    public function magic_get_throws_an_error_if_the_search_mapping_doesnt_exist ()
-    {
-        $this->expectException(UndefinedSearch::class);
-
-        $this->builder->somethingThatDoesntExist;
+        $this->builder->get('undefined-search', 'name', request());
     }
 }

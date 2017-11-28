@@ -3,60 +3,40 @@
 namespace Aviator\Search\Tests\Fixtures;
 
 use Aviator\Search\Tests\Fixtures\Abstracts\Gettable;
-use Aviator\Search\Traits\Searchable;
-use Illuminate\Database\Eloquent\Model;
+use Aviator\Search\Tests\Fixtures\Classes\User;
+use Aviator\Search\Tests\Fixtures\Classes\UserWithSearches;
 
 /**
- * @property \Illuminate\Database\Eloquent\Model userWithMixedSearches
+ * @property \Aviator\Search\Tests\Fixtures\Classes\UserWithSearches userWithMixedSearches
+ * @property \Aviator\Search\Tests\Fixtures\Classes\UserWithSearches userWithSearches
+ * @property \Aviator\Search\Tests\Fixtures\Classes\User user
  */
 class Make extends Gettable
 {
-
     /**
-     * Generate an anonymous user class with the given searches.
-     * @param array $searches
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function userClass ($searches = [])
-    {
-        return new class($searches) extends Model {
-            use Searchable;
-
-            /** @var string */
-            protected $table = 'users';
-
-            /** @var array */
-            protected $searches;
-
-            /** @param array $searches */
-            public function __construct (array $searches)
-            {
-                parent::__construct([]);
-                $this->searches = $searches;
-            }
-        };
-    }
-    /**
-     * @return \Illuminate\Database\Eloquent\Model
+     * Get a non-Searchable user model.
+     * @return \Aviator\Search\Tests\Fixtures\Classes\User
      */
     public function user ()
     {
-        return $this->userClass();
+        return new User;
     }
 
     /**
+     * Get a Searchable user with unaliased searches.
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function userWithSearches ()
     {
-        return $this->userClass(['name']);
+        return new UserWithSearches(['name']);
     }
 
     /**
+     * Get a Searchable user with a mix of aliased and unaliased searches.
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function userWithMixedSearches ()
     {
-        return $this->userClass(['name', 'test' => 'email']);
+        return new UserWithSearches(['name', 'test' => 'email']);
     }
 }
