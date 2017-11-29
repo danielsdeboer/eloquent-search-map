@@ -3,7 +3,7 @@
 namespace Aviator\Search\Exceptions;
 
 use Aviator\Search\Interfaces\Searchable;
-use PHPUnit\Runner\Exception;
+use Exception;
 
 class ModelNotSearchable extends Exception
 {
